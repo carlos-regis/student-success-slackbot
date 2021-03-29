@@ -8,6 +8,8 @@ heroku git:remote student-success-dashboard
 
 # every time
 git push heroku <branch>:main
+git subtree push --prefix dashboard heroku <branch>:main
+git subtree push --prefix dashboard heroku dashboard:main
 ```
 
 # run local
