@@ -11,7 +11,7 @@ df = pd.read_sql(
 )
 ax = df.groupby('learning_unit').slack_id.count().plot.bar(
     rot=0,
-    'How many students have completed each Learning Unit'
+    title='How many students have completed each Learning Unit'
 )
 st.pyplot(
     ax.get_figure()

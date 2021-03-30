@@ -1,3 +1,7 @@
+# hosted on
+
+https://student-success-dashboard.herokuapp.com/submit
+
 # deploy
 
 ```bash
@@ -8,8 +12,9 @@ heroku git:remote student-success-dashboard
 
 # every time
 git push heroku <branch>:main
+# this is because the app is in the dashboard/ folder
 git subtree push --prefix dashboard heroku <branch>:main
-git subtree push --prefix dashboard heroku dashboard:main
+
 ```
 
 # run local
