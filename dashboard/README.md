@@ -11,8 +11,9 @@ heroku create student-success-dashboard --buildpack heroku/python
 heroku git:remote student-success-dashboard
 
 # every time
-git push heroku <branch>:main
+
 # this is because the app is in the dashboard/ folder
+# otherwise it would be git push heroku <branch>:main
 git subtree push --prefix dashboard heroku <branch>:main
 
 ```
