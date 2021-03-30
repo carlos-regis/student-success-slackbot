@@ -9,6 +9,7 @@ https://student-success-dashboard.herokuapp.com/submit
 heroku login
 heroku create student-success-dashboard --buildpack heroku/python
 heroku git:remote student-success-dashboard
+heroku config:set DB_URI="wouldntyouliketoknow"
 
 # every time
 
