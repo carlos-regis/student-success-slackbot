@@ -1,6 +1,6 @@
 # hosted on
 
-https://student-success-dashboard.herokuapp.com/submit
+https://student-success-dashboard.herokuapp.com
 
 # deploy
 
