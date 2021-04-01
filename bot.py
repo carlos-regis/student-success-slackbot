@@ -11,11 +11,12 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # SLACK_BOT_TOKEN is the token of the bot. To get it, you should go to:
 #  https://api.slack.com/apps, select your app, under Features select 
 # OAuth & Permissions and copy Bot User OAuth Token into your .env
-client = WebClient(token=os.environ.get("SLACK_BOT_TOKEN"))
+client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 
 # insert code to get a bunch of member IDs from heroku
 
+# heroku_channel_ids will be the user's slack_id
 for channel_id in heroku_channel_ids:
     try:
         # Call the conversations.list method using the WebClient
