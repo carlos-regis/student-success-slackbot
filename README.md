@@ -9,7 +9,7 @@ https://student-success-dashboard.herokuapp.com
 heroku login
 heroku create student-success-dashboard --buildpack heroku/python
 heroku git:remote student-success-dashboard
-heroku config:set DB_URI="wouldntyouliketoknow"
+heroku config:set DB_URI="postgresql://wouldntyouliketoknow"
 
 # every time
 
@@ -22,5 +22,5 @@ git subtree push --prefix dashboard heroku <branch>:main
 # run local
 
 ```bash
-DB_URI="wouldntyouliketoknow" streamlit run app.py
+DB_URI="postgresql://wouldntyouliketoknow" streamlit run app.py
 ```
