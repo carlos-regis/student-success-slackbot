@@ -11,6 +11,14 @@ from slack_sdk.errors import SlackApiError
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
+def get_instructors_ids(client: WebClient) -> Set[str]:
+    '''
+    Gets the slack_ids of the instructors to save them from spam.
+    '''
+    response = client.conversations_members(channel="C01RBSVJ1D5")
+    instructors_ids = response["members"]
+
+    return set(instructors_ids)
 
 def get_all_slack_ids(client: WebClient) -> Set[str]:
     '''
@@ -51,11 +59,13 @@ def get_submitted_slack_ids() -> Set[str]:
 client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 all_slack_ids = get_all_slack_ids(client)
+instructors_ids = get_instructors_ids(client)
 submitted_slack_ids = get_submitted_slack_ids()
-not_submitted_slack_ids = all_slack_ids - submitted_slack_ids
+not_submitted_slack_ids = all_slack_ids - submitted_slack_ids - instructors_ids
 
 print(
     len(all_slack_ids),
+    len(instructors_ids),
     len(submitted_slack_ids),
     len(not_submitted_slack_ids),
 )
