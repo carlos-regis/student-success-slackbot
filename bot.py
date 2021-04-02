@@ -1,5 +1,8 @@
 import os
-# Import WebClient from Python SDK (github.com/slackapi/python-slack-sdk)
+from typing import Set
+
+import pandas as pd
+from sqlalchemy import create_engine
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -8,23 +11,71 @@ from slack_sdk.errors import SlackApiError
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
-# SLACK_BOT_TOKEN is the token of the bot. To get it, you should go to:
-#  https://api.slack.com/apps, select your app, under Features select 
-# OAuth & Permissions and copy Bot User OAuth Token into your .env
+
+def get_all_slack_ids(client: WebClient) -> Set[str]:
+    '''
+    Gets the slack_ids of all the human users in the workspace 
+    (the ones that have lenght 11 - this is specific to this workspace).
+    '''
+    response = client.users_list()
+    users = response["members"]
+    user_ids = list(map(lambda u: u["id"], users))
+    user_ids = [_id for _id in user_ids if len(_id) == 11]
+    
+    return set(user_ids)
+
+
+def get_submitted_slack_ids() -> Set[str]:
+    '''
+    Gets the slack_ids of all the human users in the workspace 
+    that have submitted the lu.
+    (the ones that have lenght 11 - this is specific to this workspace).
+    '''
+    engine = create_engine(os.environ['DB_URI'])
+    df = pd.read_sql(
+        "select * from submission_db where length(slack_id) = 11",
+        engine
+    )
+    submitted_slack_ids = set(
+        df.loc[
+            (df.learning_unit == int(os.environ["SLU"])) 
+            & 
+            (df.slack_id.str.len() == 11), 
+            'slack_id'
+        ]
+    )
+
+    return submitted_slack_ids
+
+
 client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
+all_slack_ids = get_all_slack_ids(client)
+submitted_slack_ids = get_submitted_slack_ids()
+not_submitted_slack_ids = all_slack_ids - submitted_slack_ids
 
-# insert code to get a bunch of member IDs from heroku
+print(
+    len(all_slack_ids),
+    len(submitted_slack_ids),
+    len(not_submitted_slack_ids),
+)
 
-# heroku_channel_ids will be the user's slack_id
-for channel_id in heroku_channel_ids:
+text = f'''
+You have not submitted SLU{os.environ["SLU"]} yet! 
+Please do, the deadline is today!
+If you need help, go to the week-{os.environ["SLU"]} channel and ask!
+'''
+
+n_messages_sent = 0
+for slack_id in not_submitted_slack_ids:
     try:
-        # Call the conversations.list method using the WebClient
         result = client.chat_postMessage(
-            channel=channel_id,
-            text="ola ricardo" # Insert your text here
+            channel=slack_id,
+            text=text
         )
-        print(result)
-
+        if result['ok']:
+            n_messages_sent += 1
     except SlackApiError as e:
         print(f"Error: {e}")
+
+print(n_messages_sent)
