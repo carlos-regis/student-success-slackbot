@@ -10,7 +10,14 @@ df = pd.read_sql(
     "select * from submission_db where length(slack_id) = 11",
     engine
 )
-df_plot = df.groupby('learning_unit').slack_id.count()
+df_plot = (
+    df
+    .groupby('learning_unit')
+    .slack_id
+    .count()
+    .to_frame()
+    .rename(columns={'slack_id': 'Number of students who have submitted'})
+)
 
 st.dataframe(df_plot, width=1000, height=1000)
 
@@ -22,3 +29,15 @@ st.pyplot(
     ax.get_figure()
 )
 
+df_table = (
+    df
+    .loc[:, ['learning_unit', 'slack_id']]
+    .sort_values(['learning_unit', 'slack_id'], ascending=[False, True])
+    .reset_index(drop=True)
+    .to_html()
+)
+
+st.markdown(
+    df_table,
+    unsafe_allow_html=True
+)

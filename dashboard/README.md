@@ -15,7 +15,7 @@ heroku config:set DB_URI="postgresql://wouldntyouliketoknow"
 
 # this is because the app is in the dashboard/ folder
 # otherwise it would be git push heroku <branch>:main
-git subtree push --prefix dashboard heroku <branch>:main
+git subtree push --prefix dashboard heroku main
 
 ```
 
