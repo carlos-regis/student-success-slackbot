@@ -19,7 +19,7 @@ df_plot = (
     .rename(columns={'slack_id': 'Number of students who have submitted'})
 )
 
-st.dataframe(df_plot, width=1000, height=1000000)
+st.dataframe(df_plot, width=1000, height=1000)
 
 ax = df_plot.plot.bar(
     rot=0,
