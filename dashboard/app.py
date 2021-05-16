@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 engine = create_engine(os.environ['DB_URI'], pool_size=3, pool_timeout=10)
 
 df = pd.read_sql(
-    "select * from submission_db where length(slack_id) = 11",
+    "select * from submission_db where length(slack_id) < 15",
     engine
 )
 df_plot = (
