@@ -18,6 +18,8 @@ df_plot = (
     .to_frame()
     .rename(columns={'slack_id': 'Number of students who have submitted'})
 )
+df_plot.index = df_plot.index.map(lambda s: float(s.replace('_', '.')))
+df_plot = df_plot.sort_index()
 
 st.dataframe(df_plot, width=1000, height=1000)
 
