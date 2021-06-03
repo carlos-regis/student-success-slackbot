@@ -22,7 +22,7 @@ df_plot = (
 st.dataframe(df_plot, width=1000, height=1000)
 
 ax = df_plot.plot.bar(
-    rot=0,
+    rot=90,
     title='How many students have completed each Learning Unit'
 )
 st.pyplot(
