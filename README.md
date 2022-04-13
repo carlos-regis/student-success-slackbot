@@ -4,7 +4,7 @@ This repo contains a script to send messages to students what have not submitted
 
 ## Environment variables
 
-* `SLACK_BOT_TOKEN` is the token of the bot. To get it, you should go to: https://api.slack.com/apps, select your app, under Features select OAuth & Permissions. It's the "Bot User OAuth Token".
+* `SLACK_BOT_TOKEN` is the token of the bot. Find it under *Bot User OAuth Token* in [this link](https://api.slack.com/apps/A03BAU6RQ5S/install-on-team).
 * `SLU_ID` the SLU number like 0 or 1.
 
 ## Run locally
@@ -12,3 +12,13 @@ This repo contains a script to send messages to students what have not submitted
 ```bash
 python bot.py
 ```
+
+## To do every year
+* Add the bot app to the new Prep course workspace. [Here is the link to the app](https://api.slack.com/apps/A03BAU6RQ5S).
+People with current access to the app:
+    * Minh
+    * Miguel
+    * Juliana
+    * Mariana 
+* Update the `INSTRUCTORS_CHANNEL_ID` in the `bot.py`
+* Add the bot to the instructors channel
