@@ -64,7 +64,7 @@ def send_message(slack_id: str, slu_id: int):
     while n < MAX_ATTEMPTS:
         try:
             result = client.chat_postMessage(
-                channel="C03BB9M2UNR", text=reminder_message(slu_id)
+                channel=slack_id, text=reminder_message(slu_id)
             )
             if result["ok"]:
                 logging.info(slack_id)
