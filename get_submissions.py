@@ -37,7 +37,7 @@ def get_submissions(url: str) -> pd.DataFrame:
                 )
                 url = next_cursor
                 page += 1
-                time.sleep(1)
+                time.sleep(0.2)
                 break
 
             except Exception as e:
