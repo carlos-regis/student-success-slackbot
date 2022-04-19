@@ -48,8 +48,8 @@ def reminder_message(slu_id: int) -> str:
         slu_id_str = "0" + slu_id_str
 
     text = f"""
+    Hi human friend!
     You have not submitted SLU{slu_id_str} yet! 
-    Please do, the deadline is today!
     If you need help, go to the week-{slu_id_str} channel and ask!
     """
     return text
