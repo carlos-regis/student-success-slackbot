@@ -1,3 +1,4 @@
+import os
 import logging
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -7,7 +8,7 @@ from get_submissions import get_submitted_slack_ids
 URL = "https://prep-course-portal.ldsacademy.org/submissions/"
 # WebClient instantiates a client that can call API methods
 client = WebClient(
-    token="xoxb-3654777008880-5117811696870-NC8S039rXHS2uHml3cfU4oDN")
+    token=os.environ["SLACK_BOT_TOKEN"])
 
 logger = logging.getLogger(__name__)
 
