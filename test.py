@@ -1,6 +1,4 @@
 import logging
-import os
-# Import WebClient from Python SDK (github.com/slackapi/python-slack-sdk)
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
