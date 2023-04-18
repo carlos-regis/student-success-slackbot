@@ -9,7 +9,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-INSTRUCTORS_CHANNEL_ID = "C036U6ZFEKC"
+INSTRUCTORS_CHANNEL_ID = "C04QNS8B9PT"
 URL = "https://prep-course-portal.ldsacademy.org/submissions/"
 SLU_ID = int(os.environ["SLU_ID"])
 
@@ -43,14 +43,14 @@ def get_all_slack_ids(client: WebClient) -> Set[str]:
 
 
 def reminder_message(slu_id: int) -> str:
-    slu_id_str = str(SLU_ID)
+    slu_id_str = str(slu_id)
     if len(slu_id_str) == 1:
         slu_id_str = "0" + slu_id_str
 
     text = f"""
     Hi human friend!
-    You have not submitted SLU{slu_id_str} yet! 
-    If you need help, go to the week-{slu_id_str} channel and ask!
+    You have not submitted the SLU{slu_id_str} yet! 
+    If you need help, go to the respective SLU channel and ask!
     """
     return text
 
@@ -73,7 +73,8 @@ def send_message(slack_id: str, slu_id: int):
 
         except SlackApiError as e:
             time.sleep(1)
-            logging.warning(f"Error on Slack API on try #{n} for {slack_id}: {e}")
+            logging.warning(
+                f"Error on Slack API on try #{n} for {slack_id}: {e}")
             n += 1
 
     if n == MAX_ATTEMPTS:
@@ -91,7 +92,8 @@ if __name__ == "__main__":
     logging.info(f"Total number of Slack IDs: {len(all_slack_ids)}")
     logging.info(f"Number of Instructor IDs: {len(instructors_ids)}")
     logging.info(f"Number of IDs with submissions: {len(submitted_slack_ids)}")
-    logging.info(f"Number of not submitted IDs: {len(not_submitted_slack_ids)}")
+    logging.info(
+        f"Number of not submitted IDs: {len(not_submitted_slack_ids)}")
 
     logging.info(not_submitted_slack_ids)
     n_messages_sent = 0

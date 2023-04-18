@@ -1,6 +1,6 @@
 # student-success-slackbot
 
-This repo contains a script to send messages to students what have not submitted a specific learning unit. When `bot.py` runs it will send the messages. This should be run locally and ad-hoc.
+This repo contains a script to send messages to students who have not submitted a specific learning unit. When `bot.py` runs it will send the messages. This should be run locally and ad-hoc.
 
 ## Environment variables
 
