@@ -9,12 +9,11 @@ from slack_sdk.errors import SlackApiError
 import utils
 from submissions import get_submitted_slack_ids
 
-load_dotenv()
-
 URL_SUBMISSIONS = "https://prep-course-portal.ldsacademy.org/submissions/"
 INSTRUCTORS_CHANNEL_ID = "C04QNS8B9PT"
 BOT_ID = "U05569Z4716"
 
+load_dotenv()
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 
 logger = logging.getLogger(__name__)
@@ -91,20 +90,16 @@ def send_message(slack_id: str, message: str):
 
 def get_slu_submission_summary(slu_id: int) -> str:
     all_slack_ids = get_workspace_users()
-    all_slack_ids.remove(BOT_ID)
-
     instructors_ids = get_channel_users(INSTRUCTORS_CHANNEL_ID)
-    instructors_ids.remove(BOT_ID)
+    students_ids = all_slack_ids - instructors_ids
 
-    # Filtering for submissions with valid slack ids
+    # Filtering for submissions with a valid student slack id
     submitted_slack_ids = set([
-        slack_id for slack_id in get_submitted_slack_ids(slu_id, URL_SUBMISSIONS) if slack_id in all_slack_ids])
-    # Filtering for submissions from students only (removes instructors tests)
-    submitted_slack_ids = set([
-        slack_id for slack_id in submitted_slack_ids if slack_id not in instructors_ids])
-    not_submitted_slack_ids = all_slack_ids - submitted_slack_ids - instructors_ids
+        slack_id for slack_id in get_submitted_slack_ids(slu_id, URL_SUBMISSIONS) if slack_id in students_ids])
 
-    logging.info(f"Number of workspace members: {len(all_slack_ids)}")
+    not_submitted_slack_ids = students_ids - submitted_slack_ids
+
+    logging.info(f"Number of students: {len(students_ids)}")
     logging.info(f"Number of instructors: {len(instructors_ids)}")
     logging.info(
         f"Number of submissions for SLU{str(slu_id).zfill(2)}: {len(submitted_slack_ids)}")
@@ -115,10 +110,9 @@ def get_slu_submission_summary(slu_id: int) -> str:
 
     return (
         f'*Basic summary for SLU{str(slu_id).zfill(2)} submissions:*\n\n'
-        f'Number of workspace members: *{len(all_slack_ids)}*\n'
-        f'Number of instructors: *{len(instructors_ids)}*\n'
-        f'Number of submissions: *{len(submitted_slack_ids)}*\n'
-        f'Number of missing submissions: *{len(not_submitted_slack_ids)}*'
+        f' - Number of students: *{len(students_ids)}*\n'
+        f' - Number of submissions: *{len(submitted_slack_ids)}*\n'
+        f' - Number of missing submissions: *{len(not_submitted_slack_ids)}*'
     )
 
 
@@ -129,6 +123,6 @@ if __name__ == "__main__":
     # print(get_workspace_users())
     # print(get_channel_users(INSTRUCTORS_CHANNEL_ID))
     # send_message(CR_ID, reminder_message(slu_id=0))
-    send_message(INSTRUCTORS_CHANNEL_ID, get_slu_submission_summary(slu_id=0))
+    send_message(CR_ID, get_slu_submission_summary(slu_id=0))
     # send_message(CR_ID, ' '.join(get_submitted_slack_ids(3, URL_SUBMISSION)))
     # send_message(channel_id, "Hey friends")
