@@ -5,10 +5,12 @@ import pandas as pd
 from typing import Set
 import time
 
+import utils
+
 logging.basicConfig(level=logging.INFO)
 
 MAX_ALLOWED_PAGES = 5000
-URL = "https://prep-course-portal.ldsacademy.org/submissions/"
+URL_SUBMISSIONS = "https://prep-course-portal.ldsacademy.org/submissions/"
 MAX_CONN_TRIES = 20
 
 
@@ -65,18 +67,15 @@ def get_submitted_slack_ids(slu_id: int, url: str) -> Set[str]:
     """
     Gets the slack_ids of all the human users in the workspace
     that have submitted the slu.
-    (the ones that have length 11 - this is specific to this workspace).
     """
     df = get_submissions(url)
 
-    submitted_slack_ids = set(
-        df.loc[(df.learning_unit == slu_id) & (
-            df.slackid.str.len() == 11), "slackid"]
-    )
+    submitted_slack_ids = set(utils.filter_valid_slack_ids(
+        df.slackid[df.learning_unit == slu_id]))
 
     return submitted_slack_ids
 
 
 if __name__ == "__main__":
-    ids = get_submitted_slack_ids(3, URL)
+    ids = get_submitted_slack_ids(3, URL_SUBMISSIONS)
     print(ids)

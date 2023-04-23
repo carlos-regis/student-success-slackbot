@@ -4,7 +4,7 @@ import time
 import pandas as pd
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-from get_submissions import get_submitted_slack_ids
+from submissions import get_submitted_slack_ids
 import logging
 
 logging.basicConfig(level=logging.INFO)
