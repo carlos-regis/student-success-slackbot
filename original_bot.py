@@ -1,7 +1,6 @@
 import os
 from typing import Set
 import time
-import pandas as pd
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from submissions import get_submitted_slack_ids
@@ -49,7 +48,7 @@ def reminder_message(slu_id: int) -> str:
 
     text = f"""
     Hi human friend!
-    You have not submitted the SLU{slu_id_str} yet! 
+    You have not submitted the SLU{slu_id_str} yet!
     If you need help, go to the respective SLU channel and ask!
     """
     return text

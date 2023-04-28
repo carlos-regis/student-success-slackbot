@@ -1,0 +1,32 @@
+from http import HTTPStatus
+
+# Submissions
+URL_SUBMISSIONS_PORTAL = "https://prep-course-portal.ldsacademy.org/submissions/"
+SLU_ID = 0
+MAX_ALLOWED_PAGES = 5000
+MAX_CONNECTION_RETRIES = 20
+RETRY_WAITING_TIME = 10
+REQUEST_RETRY_WAITING_TIME = 0.2
+PAGE_TRACKING_INTERVAL = 10
+
+# Slack
+INSTRUCTORS_CHANNEL_ID = 'C04QNS8B9PT'
+STUDENT_SUCCESS_BOT_ID = 'U05569Z4716'
+MAX_MESSAGE_ATTEMPTS = 5    # Number of maximum attemps to post a message in a channel
+SLACK_BOT_ID = 'USLACKBOT'
+MESSAGE_RETRY_WAITING_TIME = 1
+
+# Logs
+LOGS_FOLDER = 'logs'
+LOG_FILE_SUBMISSIONS = 'submissions.log'
+LOG_FILE_BOT = 'bot.log'
+LOG_SLACK = 'slack.log'
+
+# Http Status
+HTTP_STATUS_RETRY_CODES = [
+    HTTPStatus.TOO_MANY_REQUESTS,
+    HTTPStatus.INTERNAL_SERVER_ERROR,
+    HTTPStatus.BAD_GATEWAY,
+    HTTPStatus.SERVICE_UNAVAILABLE,
+    HTTPStatus.GATEWAY_TIMEOUT,
+]

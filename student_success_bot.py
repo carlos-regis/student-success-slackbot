@@ -10,11 +10,11 @@ import helpers
 
 from submissions import get_slu_slack_ids
 
-logger = utils.create_logger(
-    'bot_logger', constants.LOG_FILE_BOT)
-
 load_dotenv()
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
+
+logger = utils.create_logger(
+    'bot_logger', constants.LOG_FILE_BOT)
 
 
 def reminder_message(slu_id: int) -> str:
@@ -48,24 +48,22 @@ def get_slu_submission_slack_ids(slu_id: int):
     return students_ids, submitted_slack_ids, not_submitted_slack_ids
 
 
-def get_slu_submission_summary(slu_id: int) -> str:
+def send_message_students(not_submitted_slack_ids, slu_id: int):
 
-    students_ids, submitted_slack_ids, not_submitted_slack_ids = get_slu_submission_slack_ids(
-        slu_id)
+    n_messages_sent = 0
+    for slack_id in not_submitted_slack_ids:
+        helpers.send_message(client, slack_id=slack_id,
+                             message=reminder_message(slu_id))
+        n_messages_sent += 1
 
-    return (
-        f'*Basic summary for SLU{str(slu_id).zfill(2)} submissions:*\n\n'
-        f' - Number of students: *{len(students_ids)}*\n'
-        f' - Number of submissions: *{len(submitted_slack_ids)}*\n'
-        f' - Number of missing submissions: *{len(not_submitted_slack_ids)}*'
+    logger.info(
+        f"{n_messages_sent} students have received a reminder message on SLU{slu_id}."
     )
+
+    return None
 
 
 if __name__ == "__main__":
-    CR_ID = "U04PVQS7EG7"
-    MH_ID = "U04QZTRC524"
-
-    # print(helpers.get_workspace_users(client))
-    # print(helpers.get_channel_users(client, constants.INSTRUCTORS_CHANNEL_ID))
-    # helpers.send_message(client, CR_ID, reminder_message(slu_id=0))
-    # helpers.send_message(client, CR_ID, get_slu_submission_summary(slu_id=0))
+    students_ids, submitted_slack_ids, not_submitted_slack_ids = get_slu_submission_slack_ids(
+        constants.SLU_ID)
+    send_message_students(not_submitted_slack_ids, constants.SLU_ID)
