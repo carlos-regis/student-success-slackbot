@@ -52,18 +52,33 @@ def send_message_students(not_submitted_slack_ids, slu_id: int):
 
     n_messages_sent = 0
     for slack_id in not_submitted_slack_ids:
-        helpers.send_message(client, slack_id=slack_id,
+        helpers.send_message(client,
+                             slack_id=slack_id,
                              message=reminder_message(slu_id))
         n_messages_sent += 1
 
     logger.info(
-        f"{n_messages_sent} students have received a reminder message on SLU{slu_id}."
+        f"{n_messages_sent} students have received a reminder message on SLU{str(slu_id).zfill(2)}"
     )
 
     return None
 
 
+def get_slu_submission_summary(students_ids, submitted_slack_ids, not_submitted_slack_ids, slu_id: int) -> str:
+
+    return (
+        f'*Basic summary for SLU{str(slu_id).zfill(2)} submissions:*\n\n'
+        f' - Number of students: *{len(students_ids)}*\n'
+        f' - Number of submissions: *{len(submitted_slack_ids)}*\n'
+        f' - Number of missing submissions: *{len(not_submitted_slack_ids)}*'
+    )
+
+
 if __name__ == "__main__":
     students_ids, submitted_slack_ids, not_submitted_slack_ids = get_slu_submission_slack_ids(
         constants.SLU_ID)
+
     send_message_students(not_submitted_slack_ids, constants.SLU_ID)
+
+    # helpers.send_message(client, constants.INSTRUCTORS_CHANNEL_ID, get_slu_submission_summary(
+    #     students_ids, submitted_slack_ids, not_submitted_slack_ids, constants.SLU_ID))
