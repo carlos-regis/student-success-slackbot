@@ -8,7 +8,7 @@ import utils
 import constants
 
 logger = utils.create_logger(
-    'slack_logger', constants.LOG_SLACK)
+    'slack_logger', constants.LOG_FILE_SLACK)
 
 
 def slack_error_handler(exception: Exception, error_message: str):
@@ -31,6 +31,8 @@ def get_workspace_users(client: WebClient) -> Set[str]:
 
     except SlackApiError as exception:
         slack_error_handler(exception, "Error getting workspace users")
+
+        return set()
 
 
 def get_channel_users(client: WebClient, channel_id: str) -> Set[str]:
@@ -72,3 +74,20 @@ def send_message(client: WebClient, slack_id: str, message: str):
         logger.error(
             "Message not sent. The maximum retries was reached"
         )
+
+
+def send_image(client: WebClient, slack_id: str, file_name: str):
+    try:
+        # Call the files.upload method using the WebClient
+        # Uploading files requires the `files:write` scope
+        response = client.files_upload(
+            channels=slack_id,
+            initial_comment="Basic summary for submissions",
+            file=file_name,
+        )
+        # Log the result
+        logger.info(response)
+
+    except SlackApiError as exception:
+        slack_error_handler(
+            exception, f"Error uploading file")

@@ -35,7 +35,7 @@ def get_slu_submission_slack_ids(slu_id: int):
 
     # Filtering for submissions with a valid student slack id
     submitted_slack_ids = set([
-        slack_id for slack_id in get_slu_slack_ids(slu_id, constants.URL_SUBMISSIONS_PORTAL) if slack_id in students_ids])
+        slack_id for slack_id in get_slu_slack_ids(slu_id) if slack_id in students_ids])
 
     not_submitted_slack_ids = sorted(students_ids - submitted_slack_ids)
 
@@ -76,10 +76,11 @@ def get_slu_submission_summary(students_ids, submitted_slack_ids, not_submitted_
 
 
 if __name__ == "__main__":
-    students_ids, submitted_slack_ids, not_submitted_slack_ids = get_slu_submission_slack_ids(
-        constants.SLU_ID)
+    # students_ids, submitted_slack_ids, not_submitted_slack_ids = get_slu_submission_slack_ids(
+    #    constants.SLU_ID)
 
-    send_message_students(not_submitted_slack_ids, constants.SLU_ID)
+    # send_message_students(not_submitted_slack_ids, constants.SLU_ID)
 
     # helpers.send_message(client, constants.INSTRUCTORS_CHANNEL_ID, get_slu_submission_summary(
     #     students_ids, submitted_slack_ids, not_submitted_slack_ids, constants.SLU_ID))
+    print()

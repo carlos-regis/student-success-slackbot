@@ -21,7 +21,8 @@ MESSAGE_RETRY_WAITING_TIME = 1
 LOGS_FOLDER = 'logs'
 LOG_FILE_SUBMISSIONS = 'submissions.log'
 LOG_FILE_BOT = 'bot.log'
-LOG_SLACK = 'slack.log'
+LOG_FILE_SLACK = 'slack.log'
+LOG_FILE_DATABASE = 'database.log'
 
 # Http Status
 HTTP_STATUS_RETRY_CODES = [
@@ -31,3 +32,8 @@ HTTP_STATUS_RETRY_CODES = [
     HTTPStatus.SERVICE_UNAVAILABLE,
     HTTPStatus.GATEWAY_TIMEOUT,
 ]
+
+# Visualization
+IMG_FOLDER = 'media'
+IMG_FILE_SLU = 'ldsa_prep_slu.png'
+IMG_FILE_GLOBAL = 'ldsa_prep_global.png'

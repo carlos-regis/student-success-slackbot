@@ -3,6 +3,8 @@ example/
 *.csv
 *.code-workspace
 .DS_Store
+*.db
+media/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

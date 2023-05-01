@@ -1,0 +1,79 @@
+from peewee import (
+    SqliteDatabase, Model, BooleanField, FloatField,
+    IntegerField, TextField, IntegrityError, DateTimeField
+)
+from playhouse.shortcuts import model_to_dict
+
+import utils
+import constants
+logger = utils.create_logger(
+    'database_logger', constants.LOG_FILE_DATABASE)
+
+DB = SqliteDatabase('submissions.db')
+
+
+class Submission(Model):
+    submission_id = IntegerField(unique=True)
+    created = DateTimeField()
+    slackid = TextField()
+    learning_unit = IntegerField()
+    exercise_notebook = IntegerField()
+    score = FloatField()
+
+    class Meta:
+        database = DB
+        ordering = ('learning_unit', 'exercise_notebook', 'slackid', 'score')
+
+
+def get_all_records():
+    return [model_to_dict(obs) for obs in Submission.select()]
+
+
+def delete_all_records() -> int:
+    return Submission.delete().execute()
+
+
+def save_record(submission: Submission) -> bool:
+    try:
+        submission.save()
+        return True
+    except IntegrityError as exception:
+        DB.rollback()
+        logger.error(exception)
+        return False
+
+
+def insert_many_records(dicts) -> bool:
+    try:
+        Submission.insert_many(dicts).execute()
+        return True
+    except IntegrityError as exception:
+        DB.rollback()
+        logger.error(exception)
+        return False
+
+
+def test_db():
+    submission_dict = {'id': 2,
+                       'created': '2023-02-27T20:09:38.479111Z',
+                       'slackid': 'migueldias',
+                       'learning_unit': 0,
+                       'exercise_notebook': 1,
+                       'score': 0.0}
+    submission = Submission(
+        submission_id=submission_dict['id'],
+        created=submission_dict['created'],
+        slackid=submission_dict['slackid'],
+        learning_unit=submission_dict['learning_unit'],
+        exercise_notebook=submission_dict['exercise_notebook'],
+        score=submission_dict['score']
+    )
+    if save_record(submission):
+        print("Records successfully saved!")
+
+
+if __name__ == "__main__":
+    DB.create_tables([Submission], safe=True)
+    # test_db()
+    # print(get_all_records())
+    print(delete_all_records())
