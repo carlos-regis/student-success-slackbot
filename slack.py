@@ -75,19 +75,24 @@ def send_message(client: WebClient, slack_id: str, message: str):
             "Message not sent. The maximum retries was reached"
         )
 
+    return None
 
-def send_image(client: WebClient, slack_id: str, file_name: str):
+
+def send_image(client: WebClient, slack_id: str, initial_comment: str, file_name: str) -> bool:
     try:
         # Call the files.upload method using the WebClient
         # Uploading files requires the `files:write` scope
         response = client.files_upload(
             channels=slack_id,
-            initial_comment="Basic summary for submissions",
-            file=file_name,
+            initial_comment=initial_comment,
+            file=file_name
         )
-        # Log the result
         logger.info(response)
+
+        return True
 
     except SlackApiError as exception:
         slack_error_handler(
             exception, f"Error uploading file")
+
+        return False

@@ -13,9 +13,12 @@ PAGE_TRACKING_INTERVAL = 10
 # Slack
 INSTRUCTORS_CHANNEL_ID = 'C04QNS8B9PT'
 STUDENT_SUCCESS_BOT_ID = 'U05569Z4716'
-MAX_MESSAGE_ATTEMPTS = 5    # Number of maximum attemps to post a message in a channel
+CR_ID = "U04PVQS7EG7"
+MH_ID = "U04QZTRC524"
 SLACK_BOT_ID = 'USLACKBOT'
+
 MESSAGE_RETRY_WAITING_TIME = 1
+MAX_MESSAGE_ATTEMPTS = 5    # Number of maximum attemps to post a message in a channel
 
 # Logs
 LOGS_FOLDER = 'logs'
@@ -23,6 +26,7 @@ LOG_FILE_SUBMISSIONS = 'submissions.log'
 LOG_FILE_BOT = 'bot.log'
 LOG_FILE_SLACK = 'slack.log'
 LOG_FILE_DATABASE = 'database.log'
+LOG_FILE_SUMMARY = 'summary.log'
 
 # Http Status
 HTTP_STATUS_RETRY_CODES = [

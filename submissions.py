@@ -3,15 +3,11 @@ import constants
 import utils
 from requests.exceptions import HTTPError
 import requests
-import os
 import time
-from typing import Set, Union
+from typing import Set
 import json
 
 import pandas as pd
-import matplotlib.pylab as plt
-plt.style.use('ggplot')
-
 
 logger = utils.create_logger(
     'submissions_logger', constants.LOG_FILE_SUBMISSIONS)
@@ -89,7 +85,7 @@ def get_slu_slack_ids(slu_id: int, filter_valid_slack_id: bool = True) -> Set[st
         submissions_df.slackid[submissions_df.learning_unit == slu_id]))
 
 
-def update_db():
+def update_submissions_db():
     submissions_df = get_submissions_from_portal(constants.URL_SUBMISSIONS_PORTAL).rename(
         columns={"id": "submission_id"})
 
@@ -121,64 +117,11 @@ def get_submissions_from_db(filter_valid_slack_id: bool = True) -> pd.DataFrame:
     return submissions_df
 
 
-def get_submissions_plot_data(df: pd.DataFrame) -> Union[pd.DataFrame, None]:
-    '''
-    Transform the submissions data into a dataframe ready to be ploted.
-
-    :df: from get_submissions()
-    :returns: a dataframe ready to be ploted
-    '''
-    if df.empty:
-        return None
-
-    df_plot = (
-        df
-        .groupby(['learning_unit', 'exercise_notebook'])
-        .slackid
-        .count()
-        .reset_index()
-        .pivot(index='learning_unit', columns='exercise_notebook', values='slackid')
-        .fillna(0)
-        .astype(int)
-    )
-
-    return df_plot
-
-
-def plot_submissions(df_plot: Union[pd.DataFrame, None]) -> Union[str, None]:
-    '''
-    Plot the submissions, get the plot ready to be displayed in template.
-    https://stackoverflow.com/questions/61936775/how-to-pass-matplotlib-graph-in-django-template
-
-    :df_plot: from get_submissions_plot_data()
-
-    :returns: the encoded plot, ready to be passed to the template.
-    '''
-    if df_plot is None:
-        return None
-
-    ax = df_plot.plot.bar(figsize=(16, 4), legend=False, title=f"Submissions")
-    ax.bar_label(ax.containers[0], label_type='edge', padding=5)
-    plt.xticks(rotation=0)
-    plt.tight_layout()
-    plt.xlabel("")
-    ax.margins(y=0.1)
-
-    plt.savefig(os.path.join(
-        constants.IMG_FOLDER, constants.IMG_FILE_GLOBAL))
-
-    return None
-
-
 if __name__ == "__main__":
 
     # submissions_df = get_submissions_from_portal(constants.URL_SUBMISSIONS_PORTAL)
 
-    # ids = get_slu_slack_ids(0, constants.URL_SUBMISSIONS_PORTAL)
-    # print(ids)
-
-    # update_db()
+    # update_submissions_db()
     # get_submissions_from_db()
 
-    df_plot = get_submissions_plot_data(get_submissions_from_db())
-    plot_submissions(df_plot)
+    print()
