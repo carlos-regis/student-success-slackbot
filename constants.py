@@ -1,8 +1,9 @@
 from http import HTTPStatus
 
+SLU_ID = 2
+
 # Submissions
 URL_SUBMISSIONS_PORTAL = "https://prep-course-portal.ldsacademy.org/submissions/"
-SLU_ID = 2
 MAX_ALLOWED_PAGES = 5000
 MAX_CONNECTION_RETRIES = 20
 RETRY_WAITING_TIME = 10
