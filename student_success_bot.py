@@ -39,11 +39,12 @@ def get_slu_submission_slack_ids(slu_id: int):
 
     not_submitted_slack_ids = sorted(students_ids - submitted_slack_ids)
 
-    logger.info(f"Number of students: {len(students_ids)}")
     logger.info(
-        f"Number of submissions for SLU{str(slu_id).zfill(2)}: {len(submitted_slack_ids)}")
+        f"SLU{str(slu_id).zfill(2)} - Number of students: {len(students_ids)}")
     logger.info(
-        f"Number of missing submissions for SLU{str(slu_id).zfill(2)}: {len(not_submitted_slack_ids)}")
+        f"SLU{str(slu_id).zfill(2)} - Number of submissions: {len(submitted_slack_ids)}")
+    logger.info(
+        f"SLU{str(slu_id).zfill(2)} - Number of missing submissions: {len(not_submitted_slack_ids)}")
 
     return students_ids, submitted_slack_ids, not_submitted_slack_ids
 
@@ -58,7 +59,7 @@ def send_message_students(not_submitted_slack_ids, slu_id: int):
         n_messages_sent += 1
 
     logger.info(
-        f"{n_messages_sent} students have received a reminder message on SLU{str(slu_id).zfill(2)}"
+        f"SLU{str(slu_id).zfill(2)} - {n_messages_sent} students have received a reminder message"
     )
 
     return None
