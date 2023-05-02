@@ -75,10 +75,11 @@ def get_submissions_from_portal(base_url: str, last_submission_id: int) -> pd.Da
 
 def filter_valid_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Filter by dataframe by valid slack_ids
+    Filter by dataframe by valid slack_ids and score different than zero
     """
+    filterd_submissions_df = submissions_df[submissions_df.score != 0.0]
 
-    return submissions_df[submissions_df.slackid.apply(
+    return filterd_submissions_df[filterd_submissions_df.slackid.apply(
         utils.check_valid_slack_id)].reset_index(drop=True)
 
 
