@@ -15,6 +15,10 @@ def filter_valid_slack_ids(slack_ids: list) -> list:
     return [_id for _id in slack_ids if check_valid_slack_id(_id)]
 
 
+def fix_slack_id(slack_id: str) -> str:
+    return slack_id.replace('<', '').replace('>', '')
+
+
 def create_logger(logger_name: str, logging_file: str):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
@@ -40,3 +44,8 @@ def create_logger(logger_name: str, logging_file: str):
     logger.addHandler(file_handler)
 
     return logger
+
+
+if __name__ == "__main__":
+
+    print(fix_slack_id("<U0509EC4H8V>"))

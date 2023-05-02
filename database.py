@@ -33,7 +33,7 @@ def delete_all_records() -> int:
     return Submission.delete().execute()
 
 
-def save_record(submission: Submission) -> bool:
+def save_records(submission: Submission) -> bool:
     try:
         submission.save()
         return True
@@ -68,12 +68,15 @@ def test_db():
         exercise_notebook=submission_dict['exercise_notebook'],
         score=submission_dict['score']
     )
-    if save_record(submission):
+    if save_records(submission):
         print("Records successfully saved!")
+
+
+def get_last_submission_id() -> int:
+    return Submission.select().order_by(Submission.submission_id.desc()).get().submission_id
 
 
 if __name__ == "__main__":
     DB.create_tables([Submission], safe=True)
     # test_db()
-    # print(get_all_records())
-    print(delete_all_records())
+    print(get_last_submission_id())

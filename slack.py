@@ -49,6 +49,25 @@ def get_channel_users(client: WebClient, channel_id: str) -> Set[str]:
         slack_error_handler(exception, "Error getting channel users")
 
 
+def send_image(client: WebClient, slack_id: str, initial_comment: str, file_name: str) -> bool:
+    try:
+        # Call the files.upload method using the WebClient
+        # Uploading files requires the `files:write` scope
+        response = client.files_upload(
+            channels=slack_id,
+            initial_comment=initial_comment,
+            file=file_name
+        )
+
+        return True
+
+    except SlackApiError as exception:
+        slack_error_handler(
+            exception, f"Error uploading file")
+
+        return False
+
+
 def send_message(client: WebClient, slack_id: str, message: str):
     """
         Send a Slack message to student to remind them to
@@ -76,23 +95,3 @@ def send_message(client: WebClient, slack_id: str, message: str):
         )
 
     return None
-
-
-def send_image(client: WebClient, slack_id: str, initial_comment: str, file_name: str) -> bool:
-    try:
-        # Call the files.upload method using the WebClient
-        # Uploading files requires the `files:write` scope
-        response = client.files_upload(
-            channels=slack_id,
-            initial_comment=initial_comment,
-            file=file_name
-        )
-        logger.info(response)
-
-        return True
-
-    except SlackApiError as exception:
-        slack_error_handler(
-            exception, f"Error uploading file")
-
-        return False
