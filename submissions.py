@@ -78,9 +78,18 @@ def filter_valid_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
     Filter by dataframe by valid slack_ids and score different than zero
     """
     filterd_submissions_df = submissions_df[submissions_df.score != 0.0]
-
-    return filterd_submissions_df[filterd_submissions_df.slackid.apply(
+    filterd_submissions_df[filterd_submissions_df.slackid.apply(
         utils.check_valid_slack_id)].reset_index(drop=True)
+
+    # TODO: Needs to filter out duplicated submissions
+    """
+    4	1	<U0509EC4H8V>	19.0	April 28, 2023, 11:02 a.m.
+    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1:04 p.m.
+    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1 p.m.
+    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 12:51 p.m.
+    """
+
+    return filterd_submissions_df
 
 
 def get_slu_slack_ids(slu_id: int, filter_valid_slack_id: bool = True) -> Set[str]:
