@@ -76,7 +76,44 @@ def get_last_submission_id() -> int:
     return Submission.select().order_by(Submission.submission_id.desc()).get().submission_id
 
 
+def fix_slack_id_records(symbol_to_remove: str) -> int:
+    submission_query = (Submission
+                        .select()
+                        .where(Submission.slackid.contains(symbol_to_remove)))
+    for submission in submission_query:
+        print(submission.slackid)
+        submission.slackid = utils.fix_slack_id(submission.slackid)
+        submission.save()
+
+    return len(submission_query)
+
+
+def check_slack_id() -> int:
+    return Submission.select().order_by(Submission.slackid.desc()).get().slackid
+
+
+def set_invalid_slack_ids(string_to_replace: str) -> int:
+    submission_query = (Submission
+                        .select()
+                        .where(Submission.slackid.contains(string_to_replace)))
+    for submission in submission_query:
+        print(submission.slackid)
+        submission.slackid = 'INVALID_SLACKID'
+        submission.save()
+
+    return len(submission_query)
+
+
+def get_invalid_slack_ids() -> int:
+    return (Submission
+            .select()
+            .where(Submission.slackid.contains('INVALID_SLACKID'))
+            .count())
+
+
 if __name__ == "__main__":
     DB.create_tables([Submission], safe=True)
     # test_db()
-    print(get_last_submission_id())
+    # print(fix_slack_id_records('C04PVN0K1QF'))
+    # print(check_slack_id())
+    print(get_invalid_slack_ids())

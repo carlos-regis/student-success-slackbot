@@ -148,6 +148,5 @@ def send_submissions_summary(slack_id: str):
 
 
 if __name__ == "__main__":
-    CR_ID = "U04PVQS7EG7"
     # send_slu_submissions_summary(CR_ID, slu_id=0)
-    send_submissions_summary(CR_ID)
+    send_submissions_summary(constants.CR_ID)

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-SLU_ID = 3
+SLU_ID = 4
 
 # Submissions
 URL_SUBMISSIONS_PORTAL = "https://prep-course-portal.ldsacademy.org/submissions/"

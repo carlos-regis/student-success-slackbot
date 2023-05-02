@@ -16,7 +16,7 @@ def filter_valid_slack_ids(slack_ids: list) -> list:
 
 
 def fix_slack_id(slack_id: str) -> str:
-    return slack_id.replace('<', '').replace('>', '')
+    return re.sub("<|>|“|”|#", "", slack_id).strip()
 
 
 def create_logger(logger_name: str, logging_file: str):
@@ -49,3 +49,7 @@ def create_logger(logger_name: str, logging_file: str):
 if __name__ == "__main__":
 
     print(fix_slack_id("<U0509EC4H8V>"))
+    print(fix_slack_id("“U0505QEQ78E”"))
+    print(fix_slack_id("U050C8VC951#"))
+    print(fix_slack_id("<U050ESH0404 >"))
+    print(fix_slack_id("INVALID_SLACKID"))

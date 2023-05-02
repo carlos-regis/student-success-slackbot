@@ -79,7 +79,7 @@ def filter_valid_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
     """
 
     return submissions_df[submissions_df.slackid.apply(
-        utils.check_valid_slack_id)].reset_index()
+        utils.check_valid_slack_id)].reset_index(drop=True)
 
 
 def get_slu_slack_ids(slu_id: int, filter_valid_slack_id: bool = True) -> Set[str]:
@@ -94,6 +94,9 @@ def get_slu_slack_ids(slu_id: int, filter_valid_slack_id: bool = True) -> Set[st
 
 def get_submissions_from_db(filter_valid_slack_id: bool = True) -> pd.DataFrame:
     '''Get all the submissions into a dataframe.'''
+
+    update_submissions_db()
+
     submissions_dict = database.get_all_records()
     if not submissions_dict:
         return pd.DataFrame()
@@ -114,12 +117,10 @@ def update_submissions_db():
 
     if database.insert_many_records(submissions_df.to_dict(orient='records')):
         success_msg = "Records successfully saved"
-        print(success_msg)
         logger.info(success_msg)
         return submissions_df
     else:
         error_msg = "Error saving the records"
-        print(error_msg)
         logger.info(error_msg)
 
     return pd.DataFrame()
@@ -127,4 +128,4 @@ def update_submissions_db():
 
 if __name__ == "__main__":
 
-    update_submissions_db()
+    get_submissions_from_db()
