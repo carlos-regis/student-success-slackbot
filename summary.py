@@ -22,15 +22,22 @@ load_dotenv()
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 
 
+def get_students_ids() -> Set[str]:
+    all_slack_ids = slack.get_workspace_users(client)
+    instructors_ids = slack.get_channel_users(client,
+                                              constants.INSTRUCTORS_CHANNEL_ID)
+    return all_slack_ids - instructors_ids
+
+
 def get_slu_submissions_slack_ids(slu_id: int):
     all_slack_ids = slack.get_workspace_users(client)
     instructors_ids = slack.get_channel_users(client,
                                               constants.INSTRUCTORS_CHANNEL_ID)
-    students_ids = all_slack_ids - instructors_ids
+    students_ids = get_students_ids()
 
     # Filtering for submissions with a valid student slack id
     submitted_slack_ids = set([
-        slack_id for slack_id in submissions.get_slu_slack_ids(slu_id) if slack_id in students_ids])
+        slack_id for slack_id in submissions.get_slu_slack_ids(slu_id)])
 
     not_submitted_slack_ids = sorted(students_ids - submitted_slack_ids)
 
@@ -138,7 +145,7 @@ def generate_submissions_plot(df_plot: Union[pd.DataFrame, None]) -> Union[str, 
 
 def send_submissions_summary(slack_id: str):
     generate_submissions_plot(get_submissions_plot_data(
-        submissions.get_submissions_from_db()))
+        submissions.get_submissions_from_db(filter_students=True)))
 
     slack.send_image(client,
                      slack_id,

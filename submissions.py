@@ -9,6 +9,8 @@ import json
 
 import pandas as pd
 
+import summary
+
 logger = utils.create_logger(
     'submissions_logger', constants.LOG_FILE_SUBMISSIONS)
 
@@ -34,11 +36,12 @@ def get_submissions_from_portal(base_url: str, last_submission_id: int) -> pd.Da
                     )
                     time.sleep(constants.HTTP_RETRY_WAITING_TIME)
                     continue
-                else:
+                elif exception.response.status_code == constants.HTTP_STATUS_NOT_FOUND:
                     logger.exception(
-                        f"Connection to the Submissions Portal API failed"
+                        f"Page not found"
                     )
-                    raise
+                    page_url = None
+                    break
 
             try:
                 response = json.loads(request.text)
@@ -67,42 +70,52 @@ def get_submissions_from_portal(base_url: str, last_submission_id: int) -> pd.Da
             logger.info(f"Fetched {len(submissions)} submissions")
             break
 
-    submissions_df = pd.DataFrame(submissions)
-    submissions_df.slackid = submissions_df.slackid.apply(utils.fix_slack_id)
+    if submissions:
+        submissions_df = pd.DataFrame(submissions)
+        submissions_df[submissions_df.id > last_submission_id]
+        submissions_df.slackid = submissions_df.slackid.apply(
+            utils.fix_slack_id)
 
-    return submissions_df[submissions_df.id > last_submission_id]
+        return submissions_df
+    else:
+        return pd.DataFrame()
 
 
 def filter_valid_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
     """
     Filter by dataframe by valid slack_ids and score different than zero
     """
-    filterd_submissions_df = submissions_df[submissions_df.score != 0.0]
-    filterd_submissions_df[filterd_submissions_df.slackid.apply(
+    filtered_submissions_df = submissions_df[(submissions_df.score != 0.0) &
+                                             (submissions_df.slackid != constants.INVALID_SLACK_ID)]
+    filtered_submissions_df[filtered_submissions_df.slackid.apply(
         utils.check_valid_slack_id)].reset_index(drop=True)
 
-    # TODO: Needs to filter out duplicated submissions
-    """
-    4	1	<U0509EC4H8V>	19.0	April 28, 2023, 11:02 a.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1:04 p.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1 p.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 12:51 p.m.
-    """
+    filtered_submissions_df = (filtered_submissions_df
+                               .sort_values(by=['slackid', 'learning_unit', 'exercise_notebook', 'score'],
+                                            ascending=[False, False, False, False])
+                               .groupby(['learning_unit', 'exercise_notebook', 'slackid'])
+                               .nth(0)
+                               .reset_index())
 
-    return filterd_submissions_df
+    return filtered_submissions_df
 
 
 def get_slu_slack_ids(slu_id: int, filter_valid_slack_id: bool = True) -> Set[str]:
     """
     Gets a set of slack_ids of the submissions for a specific SLU
     """
-    submissions_df = get_submissions_from_db(filter_valid_slack_id)
+    if (filter_valid_slack_id):
+        submissions_df = get_submissions_from_db(
+            filter_valid_slack_id, filter_students=True)
+    else:
+        submissions_df = get_submissions_from_db(filter_valid_slack_id)
 
     return set(utils.filter_valid_slack_ids(
         submissions_df.slackid[submissions_df.learning_unit == slu_id]))
 
 
-def get_submissions_from_db(filter_valid_slack_id: bool = True) -> pd.DataFrame:
+def get_submissions_from_db(filter_valid_slack_id: bool = True,
+                            filter_students: bool = False) -> pd.DataFrame:
     '''Get all the submissions into a dataframe.'''
 
     update_submissions_db()
@@ -117,6 +130,10 @@ def get_submissions_from_db(filter_valid_slack_id: bool = True) -> pd.DataFrame:
     if filter_valid_slack_id:
         submissions_df = filter_valid_submissions(submissions_df)
 
+    if filter_students:
+        submissions_df = submissions_df[submissions_df.slackid.isin(
+            summary.get_students_ids())]
+
     return submissions_df
 
 
@@ -125,17 +142,17 @@ def update_submissions_db():
                                                  database.get_last_submission_id()).rename(
         columns={"id": "submission_id"})
 
-    if database.insert_many_records(submissions_df.to_dict(orient='records')):
-        success_msg = "Records successfully saved"
-        logger.info(success_msg)
-        return submissions_df
-    else:
-        error_msg = "Error saving the records"
-        logger.info(error_msg)
+    if not submissions_df.empty:
+        if database.insert_many_records(submissions_df.to_dict(orient='records')):
+            success_msg = "Records successfully saved"
+            logger.info(success_msg)
+        else:
+            error_msg = "Error saving the records"
+            logger.info(error_msg)
 
-    return pd.DataFrame()
+    return None
 
 
 if __name__ == "__main__":
 
-    get_submissions_from_db()
+    get_submissions_from_db(filter_students=True)

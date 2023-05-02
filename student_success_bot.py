@@ -49,11 +49,4 @@ if __name__ == "__main__":
 
     send_message_students(not_submitted_slack_ids, constants.SLU_ID)
 
-    # TODO: Needs to filter out duplicated submissions
-    """
-    4	1	<U0509EC4H8V>	19.0	April 28, 2023, 11:02 a.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1:04 p.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 1 p.m.
-    4	1	<U0509EC4H8V>	18.5	April 27, 2023, 12:51 p.m.
-    """
     summary.send_submissions_summary(constants.INSTRUCTORS_CHANNEL_ID)
