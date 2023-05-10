@@ -48,6 +48,8 @@ def get_channel_users(client: WebClient, channel_id: str) -> Set[str]:
     except SlackApiError as exception:
         slack_error_handler(exception, "Error getting channel users")
 
+        return set()
+
 
 def send_image(client: WebClient, slack_id: str, initial_comment: str, file_name: str) -> bool:
     try:

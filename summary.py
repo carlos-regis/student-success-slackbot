@@ -26,13 +26,13 @@ def get_students_ids() -> Set[str]:
     all_slack_ids = slack.get_workspace_users(client)
     instructors_ids = slack.get_channel_users(client,
                                               constants.INSTRUCTORS_CHANNEL_ID)
-    return all_slack_ids - instructors_ids
+    if (all_slack_ids & instructors_ids):
+        return all_slack_ids - instructors_ids
+    else:
+        raise SystemExit(1)
 
 
 def get_slu_submissions_slack_ids(slu_id: int):
-    all_slack_ids = slack.get_workspace_users(client)
-    instructors_ids = slack.get_channel_users(client,
-                                              constants.INSTRUCTORS_CHANNEL_ID)
     students_ids = get_students_ids()
 
     # Filtering for submissions with a valid student slack id
@@ -155,5 +155,5 @@ def send_submissions_summary(slack_id: str):
 
 
 if __name__ == "__main__":
-    # send_slu_submissions_summary(CR_ID, slu_id=0)
-    send_submissions_summary(constants.CR_ID)
+    send_slu_submissions_summary(constants.CR_ID, slu_id=3)
+    # send_submissions_summary(constants.CR_ID)

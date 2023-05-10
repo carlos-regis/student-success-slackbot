@@ -45,6 +45,9 @@ def get_submissions_from_portal(base_url: str, last_submission_id: int) -> pd.Da
 
             try:
                 response = json.loads(request.text)
+                if (int(response.get("count")) == last_submission_id):
+                    page_url = None
+                    break
                 submissions += response.get("results")
                 page_url = response.get("next")
                 time.sleep(constants.REQUEST_RETRY_WAITING_TIME)
@@ -146,13 +149,13 @@ def update_submissions_db():
         if database.insert_many_records(submissions_df.to_dict(orient='records')):
             success_msg = "Records successfully saved"
             logger.info(success_msg)
+            return
         else:
             error_msg = "Error saving the records"
-            logger.info(error_msg)
-
-    return None
+            logger.error(error_msg)
+            raise SystemExit(1)
 
 
 if __name__ == "__main__":
 
-    get_submissions_from_db(filter_students=True)
+    print(get_submissions_from_db(filter_students=True).head())

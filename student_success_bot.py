@@ -49,4 +49,4 @@ if __name__ == "__main__":
 
     send_message_students(not_submitted_slack_ids, constants.SLU_ID)
 
-    summary.send_submissions_summary(constants.INSTRUCTORS_CHANNEL_ID)
+    # summary.send_submissions_summary(constants.INSTRUCTORS_CHANNEL_ID)
