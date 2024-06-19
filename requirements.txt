@@ -8,6 +8,6 @@ pytz==2022.1
 requests==2.27.1
 six==1.16.0
 slack-sdk==3.15.2
-urllib3==1.26.9
+urllib3==1.26.19
 peewee==3.15.4
 matplotlib==3.6.2
